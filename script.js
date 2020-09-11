@@ -13,26 +13,102 @@ var workHours = {
 
 $(document).ready(function () {
     //retrieve items from local storage when the page loads
+    if (!localStorage.getItem('workHours')) {
+        updateCalendar(workHours);
+    } else {
+        updateCalendar(JSON.parse(localStorage.getItem('workHours')));
+    }
+});
+//Add the date to the page using moments.js
+var time = moment().format('LT');
+console.log(time);
+
+displayDateDay();
+
+//function to display current date/day
+function displayDateDay() {
+    var weekDay = moment().format("dddd");
+    var date = moment().format("MMM Do YYYY");
+    $("#currentDay").append(weekDay + ", " + date);
+    console.log(weekDay + date);
+
+}
+
+//for loop to determine what time blocks get what classes
+var hourProgress = 1;
+for (var property in workHours) {
+    var userInput = "#text-entry" + hourProgress;
+    $(userInput).text(workHours[property]);
+    var time = "#time" + hourProgress;
+    var presentHour = moment().hour();
+    var timeValue = $(time).text();
+    var timePNumbers = hourFromHourValue(timeValue);
+    if (timePNumbers < presentHour) {
+        $(userInput).addClass("past");
+    } else if (timePNumbers > presentHour) {
+        $(userInput).addClass("future");
+    } else {
+        $(userInput).addClass("present");
+    }
+    hourProgress++;
+}
+
+$("button").click(function () {
+    value = $(this).siblings("textarea").val();
+    hourValue = $(this).siblings("div").text();
+
+    saveUserInput(hourValue, value);
+})
+
+function hourFromHourValue(hourValue) {
+    switch (hourValue) {
+        case "9AM": return 9;
+        case "10AM": return 10;
+        case "11AM": return 11;
+        case "12PM": return 12;
+        case "1PM": return 13;
+        case "2PM": return 14;
+        case "3PM": return 15;
+        case "4PM": return 16;
+        case "5PM": return 17;
+    }
+}
 
 
-    //Add the date to the page using moments.js
-    var time = moment().format('LT');
-    console.log(time);
-    
-    displayDateDay();
-    
-    //function to display current date/day
-    function displayDateDay() {
-        var weekDay = moment().format("dddd");
-        var date = moment().format("MMM Do YYYY");
-        $("#currentDay").append(weekDay + ", " + date);
-        console.log(weekDay + date);
+function loadDataset() {
+    result = localStorage.getItem("workHours")
+    return (result ? result : workHours);
+}
 
+function initializeLS() {
+    localStorage.setItem("workHours", JSON.stringify(workHours));
+}
+
+function saveToLS(dayObj) {
+    localStorage.setItem('workHours', JSON.stringify(dayObj));
+}
+
+function saveUserInput(hourValue, val) {
+    if (!localStorage.getItem("workHours")) {
+        initializeLS();
     }
 
-    //create a loop that will see the time and add the appropriate CSS class based on the time of day
-    
-});
+
+    var workDay = JSON.parse(localStorage.getItem("workHours"));
+    workDay[hourValue] = val
+
+    saveToLS(workDay);
+
+}
+
+function updateCalendar(dayObject) {
+    $(".calendar-row").each(function (index) {
+        var res = $(this).children("div");
+        $(this).children("textarea").text(dayObject[res.text()]);
+    })
+}
+
+
 
 
 // var key = "9am";
