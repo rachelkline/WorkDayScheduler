@@ -36,15 +36,17 @@ textarea{
   border-top: 1px solid white;;
 }
 
+#time9 {
+  border-bottom: 1px dashed #000000;
+}
+
 .hour {
   background-color: #ffffff;
   color: #000000;
   border-top: 1px dashed #000000;
 }
 
-#text-entry-9 {
-  border-bottom: 1px dashed #000000;
-}
+
 
 .past {
   background-color: #d3d3d3;
@@ -69,7 +71,7 @@ textarea{
   color: white;
 }
 
-.saveBtn i:hover {
+.saveBtn:hover {
   font-size: 20px;
   transition: all .3s ease-in-out;
 }
